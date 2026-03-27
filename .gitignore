@@ -1,0 +1,47 @@
+test_api.py
+
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environnements virtuels
+venv/
+.env/
+.envrc
+.venv/
+
+
+# Data files
+data/
+*.csv
+*.json
+*.xlsx
+
+# 🗄️ Database
+*.db
+*.sqlite3
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE / Editors
+.vscode/
+.idea/
+
+# build / cache
+dist/
+build/
+*.egg-info/
+
+# API keys
+*.env
+.env.*
