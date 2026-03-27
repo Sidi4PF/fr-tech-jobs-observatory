@@ -1,0 +1,17 @@
+{
+  "name": "Observatory",
+  "dataColors": [
+    "#534AB7", "#1D9E75", "#7F77DD",
+    "#5DCAA5", "#AFA9EC", "#9FE1CB"
+  ],
+  "background": "#0F1117",
+  "foreground": "#F0EEE8",
+  "tableAccent": "#534AB7",
+  "visualStyles": {
+    "*": { "*": {
+      "background": [{ "color": { "solid": { "color": "#1A1D28" }}}],
+      "border": [{ "color": { "solid": { "color": "#2E3044" }}}],
+      "fontColor": [{ "color": { "solid": { "color": "#F0EEE8" }}}]
+    }}
+  }
+}

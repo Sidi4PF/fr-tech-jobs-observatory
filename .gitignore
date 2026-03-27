@@ -1,47 +1,28 @@
-test_api.py
-
-# Secrets
+# API credentials — never commit
 .env
 
 # Python
 __pycache__/
 *.pyc
 *.pyo
-*.pyd
-
-# Environnements virtuels
-venv/
-.env/
-.envrc
 .venv/
+venv/
 
+# Large data files and all exports
+data/raw/
+data/processed/
+*.duckdb
 
-# Data files
-data/
-*.csv
-*.json
-*.xlsx
+# Keep all exports (CSVs + .pbix + theme JSON → loaded into Power BI)
+!data/exports/
+!data/exports/**
 
-# 🗄️ Database
-*.db
-*.sqlite3
-
-# Logs
-*.log
-
-# OS files
+# OS
 .DS_Store
 Thumbs.db
 
-# IDE / Editors
+# IDE
 .vscode/
 .idea/
 
-# build / cache
-dist/
-build/
-*.egg-info/
-
-# API keys
-*.env
-.env.*
+test_api.py
