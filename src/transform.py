@@ -20,6 +20,9 @@ QUERIES = {
             company_name,
             contract_type,
             city,
+            city_geocode,
+            latitude,
+            longitude,
             postal_code,
             department,
             date_creation,
@@ -40,6 +43,7 @@ QUERIES = {
             title,
             company_name,
             city,
+            city_geocode,
             department,
             skill
         FROM fact_offer_skills
@@ -120,7 +124,7 @@ QUERIES = {
         GROUP BY city
         ORDER BY nb_offres DESC, city
         LIMIT 20
-    """,
+    """
 }
 
 
@@ -139,6 +143,9 @@ def build_database(con: duckdb.DuckDBPyConnection) -> None:
             company_name,
             contract_type,
             city,
+            city_geocode,
+            latitude,
+            longitude,
             postal_code,
             department,
             date_creation,
@@ -161,6 +168,7 @@ def build_database(con: duckdb.DuckDBPyConnection) -> None:
             title,
             company_name,
             city,
+            city_geocode,
             department,
             unnest(skills) AS skill
         FROM offers_clean
