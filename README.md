@@ -1,276 +1,207 @@
-# FR Tech Jobs Observatory — Analyse du Marché Tech Français
+# FR Tech Jobs Observatory
 
-[![Python](https://img.shields.io/badge/Python-3.11-blue?style=flat-square&logo=python)](https://www.python.org/)
-[![DuckDB](https://img.shields.io/badge/DuckDB-0.10-yellow?style=flat-square)](https://duckdb.org/)
-[![Power BI](https://img.shields.io/badge/Power%20BI-Dashboard-orange?style=flat-square&logo=powerbi)](https://powerbi.microsoft.com/)
-[![API](https://img.shields.io/badge/France%20Travail-API-green?style=flat-square)](https://francetravail.io/)
-[![License](https://img.shields.io/badge/License-MIT-lightgrey?style=flat-square)](LICENSE)
+> Analyse du marché tech français via l'API France Travail — pipeline Python · DuckDB · Power BI
 
-## Vue d'ensemble
-
-Pipeline data analyst end-to-end analysant **1 075+ offres d'emploi tech réelles** issues de l'API France Travail (ex-Pôle Emploi).
-
-**Stack technique** : Python | DuckDB | SQL | Power BI
+![Python](https://img.shields.io/badge/Python-3.11-blue) ![DuckDB](https://img.shields.io/badge/DuckDB-latest-yellow) ![Power BI](https://img.shields.io/badge/Power%20BI-2.152-orange)
 
 ---
 
-## Objectifs du Projet
+## What this project does
 
-- Collecter des données réelles via une API REST avec authentification OAuth2
-- Nettoyer et structurer des données brutes (salaires en texte libre, champs imbriqués)
-- Construire un schéma en étoile et calculer des KPIs business actionnables
-- Visualiser les insights dans un dashboard Power BI interactif
+This project collects, cleans, and analyses French tech job postings (Python & SQL roles) from the France Travail public API. It produces a structured star schema in DuckDB and a two-page Power BI dashboard with market insights.
 
----
+**Key findings from the latest dataset (1 115 offers · 2025–2026) :**
 
-## Architecture
+- SQL appears in **81%** of postings — it is the baseline requirement, not a differentiator
+- Git (52%) and Python (41%) follow — Python remains the signal for senior data roles
+- Remote roles pay a **+11% median premium** (40k€ vs 36k€ on-site)
+- **W12 (mid-March)** was the hiring peak at 294 offers — post-Q1 budget release
+- IDF concentrates 61% of offers, but Lyon (97), Nantes (54) and Marseille (51) show active regional markets
 
-```
-┌──────────────────┐
-│  France Travail  │
-│       API        │  OAuth2 + pagination
-└────────┬─────────┘
-         │ collect.py
-         ▼
-┌──────────────────┐
-│   RAW PARQUET    │  offers_raw.parquet
-│   ~1 075 offres  │
-└────────┬─────────┘
-         │ clean.py
-         ▼
-┌──────────────────┐
-│ CLEAN PARQUET    │  Salaires parsés, skills extraits
-│                  │  is_remote détecté
-└────────┬─────────┘
-         │ transform.py (DuckDB)
-         ▼
-┌──────────────────┐
-│   STAR SCHEMA    │  fact_offers
-│                  │  fact_offer_skills
-│   + CSV EXPORTS  │  → Power BI
-└──────────────────┘
-```
+> Salary data is available for ~28% of offers only. Medians should be interpreted with caution, especially for roles with fewer than 10 salary-bearing offers.
 
 ---
 
-## Résultats Clés
+## Dashboard
 
-> ⚠️ Les insights chiffrés seront ajoutés à la fin de la construction du dashboard Power BI.
+Two-page Power BI report — see [`docs/screenshots/dashboard.pdf`](docs/screenshots/dashboard.pdf)
 
-<!--
-### Métriques Business
+**Page 1 — Overview**
 
-- **X** offres analysées
-- **X%** des offres mentionnent SQL
-- **X%** des offres en remote ou hybride
-- **Salaire médian** : ~Xk€/an
+- 5 KPI cards (total offers, median salary, remote %, unique companies, unique cities)
+- Top skills in demand · Median salary by role · Offers map (Azure Maps) · Contract type split · Weekly hiring trend
 
-### Insights
+**Page 2 — Market Insights**
 
-- 🏆 Skill la plus demandée : ...
-- 📊 Data Engineer vs Data Analyst : écart salarial de Xk€
-- 🌍 Île-de-France concentre X% des offres
--->
+- Skills in demand as % of postings
+- Remote vs on-site salary comparison (+11% premium)
+- Top 3 regional markets outside IDF
+- Weekly hiring trend with W12 peak annotation
+- Data quality caveat
 
 ---
 
-## Installation & Usage
+## Stack
 
-### Prérequis
-
-```
-Python 3.11+
-Compte développeur France Travail (gratuit)
-Power BI Desktop
-```
-
-### Setup
-
-**1. Cloner le repo**
-
-```bash
-git clone https://github.com/Sidi4PF/fr-tech-jobs-observatory.git
-cd fr-tech-jobs-observatory
-```
-
-**2. Environnement Python**
-
-```bash
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-**3. Credentials API**
-
-Créer un fichier `.env` à la racine (jamais commité) :
-
-```
-FT_CLIENT_ID=your_client_id
-FT_CLIENT_SECRET=your_client_secret
-```
-
-Obtenir les credentials sur [francetravail.io](https://francetravail.io) → créer une application → activer le scope `api_offresdemploiv2`.
-
-**4. Lancer le pipeline**
-
-```bash
-# Collecte des offres via l'API (pagination automatique)
-python src/collect.py
-
-# Nettoyage, parsing des salaires, extraction des skills
-python src/clean.py
-
-# Schéma en étoile DuckDB + export CSV pour Power BI
-python src/transform.py
-```
-
-Les fichiers CSV sont générés dans `data/exports/` — à charger directement dans Power BI.
+| Layer           | Tool                                 |
+| --------------- | ------------------------------------ |
+| Data collection | Python · France Travail API (OAuth2) |
+| Storage (raw)   | Parquet                              |
+| Transformation  | DuckDB · SQL                         |
+| Exports         | CSV (UTF-8-sig)                      |
+| Visualisation   | Power BI Desktop 2.152 · Azure Maps  |
 
 ---
 
-## Structure du Projet
+## Project structure
 
 ```
 fr-tech-jobs-observatory/
 ├── src/
-│   ├── collect.py              # Collecteur API (OAuth2, pagination)
-│   ├── clean.py                # Nettoyage, parsing salaires, extraction skills
-│   └── transform.py            # DuckDB star schema + exports KPI
-├── sql/
-│   └── kpi_queries.sql         # Toutes les requêtes KPI
+│   ├── collect.py          # API collector — OAuth2, pagination, raw parquet
+│   ├── clean.py            # Cleaning — salary parsing, skill extraction, GPS coords
+│   ├── transform.py        # DuckDB star schema + CSV exports
+│   └── run_all.py          # One-command pipeline runner
 ├── data/
-│   ├── raw/                    # offers_raw.parquet (non versionné)
-│   ├── processed/              # offers_clean.parquet (non versionné)
-│   └── exports/                # CSVs → Power BI (versionnés)
+│   ├── raw/                # offers_raw.parquet (gitignored)
+│   ├── processed/          # offers_clean.parquet (gitignored)
+│   └── exports/            # CSV files for Power BI
 │       ├── fact_offers.csv
 │       ├── fact_offer_skills.csv
 │       ├── kpi_top_skills.csv
 │       ├── kpi_salary_overview.csv
 │       ├── kpi_geo.csv
 │       ├── kpi_weekly_trend.csv
-│       └── kpi_contract_type.csv
-├── assets/screenshots/         # Screenshots dashboard (à venir)
-├── theme_observatory.json      # Thème Power BI dark
-├── requirements.txt
+│       ├── kpi_contract_type.csv
+│       └── kpi_top_cities.csv
+├── docs/
+│   └── screenshots/
+│       └── dashboard.pdf
 ├── .gitignore
 └── README.md
 ```
 
 ---
 
-## Défis Techniques
-
-### 1. Pagination API — 150 résultats max par requête
-
-L'API France Travail plafonne les réponses à 150 résultats par appel. Résolu en implémentant un collecteur paginé avec des offsets `range` itératifs, avec un sleep de 400ms entre chaque requête pour respecter le rate limit.
-
-### 2. Erreurs d'authentification OAuth2 (403)
-
-Les premières requêtes retournaient `403 Forbidden`. Cause racine : mauvais scope OAuth. Corrigé en passant explicitement `api_offresdemploiv2 o2dsoffre` dans la requête de token. Documenté dans `src/collect.py`.
-
-### 3. Stratégie de mots-clés — pivot décisif
-
-Démarrage avec des keywords stricts sur les métiers Data (`data analyst`, `data scientist`...) → seulement ~300 offres, volume insuffisant. Pivot vers une requête large `Python` + `SQL` → 1 075 offres uniques après déduplication sur l'`id`. Ce choix reflète mieux le marché réel des profils techniques.
-
-### 4. Salaires stockés en texte libre
-
-L'API retourne les salaires comme chaînes de caractères libres (`"35 000 à 45 000 EUR"`). Résolu avec du parsing regex dans `clean.py` pour extraire `salary_min`, `salary_max` et calculer `salary_median`. ~38% des offres avaient des données salariales exploitables.
-
-### 5. Schéma en étoile avec DuckDB
-
-Choix de DuckDB plutôt qu'une base de données complète pour la simplicité et la rapidité en local. Utilisation de `UNNEST()` pour exploser les listes de skills en table `fact_offer_skills` séparée, permettant une analyse many-to-many sans duplication.
-
-### 6. Power BI — types de données et relations ambiguës
-
-Lors du chargement des CSVs : salaires importés en texte au lieu de décimal, et colonnes `id` avec types incohérents entre les deux tables causaient des relations silencieusement cassées. Corrigé en forçant les types dans Power Query avant de créer les relations.
-
----
-
-## Modèle de Données
+## Data model
 
 ```
-fact_offers (1) ──────────────────────── (many) fact_offer_skills
-    id (PK)                                          id (FK)
-    title                                            skill
-    company_name
-    contract_type
-    city / department
-    date_creation / year / month / week
+fact_offers (1) ──────────── (many) fact_offer_skills
+    id                              id
+    title                           title
+    company_name                    company_name
+    contract_type                   city
+    city                            city_geocode
+    city_geocode                    department
+    latitude                        skill
+    longitude
+    postal_code
+    department
+    date_creation
+    year · month · week
     is_remote
-    salary_min / salary_max / salary_median
+    salary_min · salary_max · salary_median
     skills_count
 ```
 
-Relation : `fact_offers[id]` → `fact_offer_skills[id]` · One-to-many · Cross-filter : Both
+Relation : one-to-many · cross-filter : Both directions
 
 ---
 
-## Dashboard Power BI
+## Pipeline
 
-> ⚠️ Dashboard en cours de finalisation — screenshots à venir.
+### 1. Collect — `src/collect.py`
 
-**Page 1 — Overview**
+Connects to the France Travail API using OAuth2 (`scope: api_offresdemploiv2 o2dsoffre`). Paginates results by offsets of 150 with a 400ms sleep between requests. Saves raw offers to `data/raw/offers_raw.parquet`.
 
-- 5 KPI cards : total offres, salaire médian, % remote, entreprises uniques, villes uniques
-- Bar chart horizontal : Top 10 skills les plus demandées
-- Bar chart horizontal : Salaire médian par métier
-- Filled Map : densité d'offres par département
-- Donut chart : répartition CDI / CDD
-- Column chart : évolution hebdomadaire des offres
+### 2. Clean — `src/clean.py`
 
-**Page 2 — Skills & Salaires**
+- Extracts structured fields from nested API JSON
+- Parses salary from free-text `libelle` field using regex
+- Detects remote work mentions in job descriptions
+- Extracts 30+ skills from description text
+- Extracts GPS coordinates (`latitude`, `longitude`) directly from `lieuTravail`
+- Outputs `data/processed/offers_clean.parquet`
 
-- Matrix heatmap : skills × type de contrat
-- Scatter plot : fréquence skill vs salaire médian associé
-- Bar chart : % remote par métier
+**Salary parsing logic :**
 
----
+```python
+def parse_salary(salaire):
+    # Detects monthly vs annual
+    # Converts monthly → annual once (×12)
+    # Safety net: amounts < 15k assumed monthly
+    # Filters outliers: median < 15k or > 300k → None
+```
 
-## Stack Technique
+A critical bug was fixed in April 2026 : alternance salaries (e.g. 810–1801€/month) were being converted twice, producing inflated values up to 259k€/year. The fix applies the monthly→annual conversion exactly once using `if/elif`.
 
-| Technologie        | Usage                                           |
-| ------------------ | ----------------------------------------------- |
-| **Python**         | Collecte API, nettoyage, orchestration pipeline |
-| **DuckDB**         | Transformations SQL locales, star schema        |
-| **pandas / NumPy** | Manipulation et nettoyage des données           |
-| **Power BI**       | Dashboard interactif, DAX measures              |
-| **GitHub Actions** | Refresh automatique hebdomadaire                |
+### 3. Transform — `src/transform.py`
 
----
+Loads the clean parquet into DuckDB and builds two fact tables :
 
-## Décisions de Design
+- `fact_offers` — one row per offer
+- `fact_offer_skills` — one row per offer × skill (via `UNNEST`)
 
-- **Scope large (Python & SQL)** plutôt que strict Data roles → dataset plus réaliste et représentatif du marché tech
-- **DuckDB** au lieu d'une vraie BDD → zéro infrastructure, SQL complet, performant sur fichiers locaux
-- **Star schema** `fact_offers` + `fact_offer_skills` → analyse des skills sans duplication, compatible Power BI
-- **Parquet** pour le stockage intermédiaire → plus léger que CSV, typage natif
+Exports 7 pre-aggregated KPI tables as CSV for Power BI consumption.
 
----
+### 4. Run all — `src/run_all.py`
 
-## Améliorations Futures
+```bash
+python src/run_all.py
+```
 
-- [ ] Enrichissement avec données INSEE (revenus médians par département)
-- [ ] Ajout d'autres sources (Welcome to the Jungle, LinkedIn)
-- [ ] NLP plus avancé pour l'extraction de skills (spaCy)
-- [ ] Dashboard Streamlit pour une version web publique
-- [ ] Incremental loading — ne collecter que les nouvelles offres
-- [ ] CI/CD avec GitHub Actions pour refresh automatique
+Runs the full pipeline in sequence : collect → clean → transform.
 
 ---
 
-## Contact
+## Setup
 
-**Sidi Amadou BOCOUM**
+### Prerequisites
 
-- 💼 LinkedIn : https://www.linkedin.com/in/sidi-amadou-bocoum-046b691b6/
-- 📧 Email : sidi.bocoum02@gmail.com
-- 💻 GitHub : https://github.com/Sidi4PF
+- Python 3.11+
+- France Travail API credentials ([register here](https://francetravail.io/data/api))
+
+### Install
+
+```bash
+git clone https://github.com/Sidi4PF/fr-tech-jobs-observatory.git
+cd fr-tech-jobs-observatory
+pip install -r requirements.txt
+```
+
+### Configure
+
+Create a `.env` file at the root :
+
+```
+CLIENT_ID=your_client_id
+CLIENT_SECRET=your_client_secret
+```
+
+### Run
+
+```bash
+python src/run_all.py
+```
+
+Then open Power BI Desktop and refresh the data sources pointing to `data/exports/`.
 
 ---
 
-## Licence
+## Technical challenges
 
-Ce projet est sous licence MIT.
+**API pagination** — France Travail limits results to 150 per request. The collector loops over offsets with a sleep to avoid rate limiting.
 
-Les données proviennent de l'[API France Travail](https://francetravail.io) — usage soumis aux [CGU France Travail](https://francetravail.io/data/api).
+**OAuth2 scope** — the correct scope is `api_offresdemploiv2 o2dsoffre`. Using only `api_offresdemploiv2` returns a 403.
+
+**Salary parsing** — salaries are stored as free text (e.g. `"Annuel de 45000.0 Euros à 65000.0 Euros sur 12.0 mois"`). A regex parser handles annual, monthly, and edge cases. A double-conversion bug for alternance contracts was identified and fixed.
+
+**GPS coordinates** — the API already provides `latitude` and `longitude` in `lieuTravail`. These are extracted directly, avoiding the need for a geocoding API for 88% of offers.
+
+**Star schema in DuckDB** — `fact_offer_skills` is built via `UNNEST(skills)` directly in SQL, producing a clean one-row-per-skill table without Python loops.
+
+---
+
+## Author
+
+Sidi · Data Analyst · [GitHub](https://github.com/Sidi4PF)
