@@ -1,21 +1,21 @@
 ﻿skill,nb_offres,pct_offres
-sql,891,82.9
-git,563,52.4
-python,450,41.9
-azure,183,17.0
-postgresql,138,12.8
-docker,135,12.6
-kubernetes,123,11.4
-aws,112,10.4
-power bi,111,10.3
-tableau,102,9.5
-gcp,76,7.1
-mysql,74,6.9
-machine learning,66,6.1
-spark,56,5.2
-kafka,41,3.8
-databricks,39,3.6
-terraform,34,3.2
-snowflake,33,3.1
-airflow,29,2.7
-llm,26,2.4
+sql,907,81.3
+git,589,52.8
+python,462,41.4
+azure,193,17.3
+postgresql,148,13.3
+docker,137,12.3
+kubernetes,129,11.6
+aws,126,11.3
+power bi,116,10.4
+tableau,106,9.5
+gcp,85,7.6
+mysql,75,6.7
+machine learning,60,5.4
+spark,55,4.9
+snowflake,41,3.7
+databricks,40,3.6
+kafka,35,3.1
+terraform,32,2.9
+dbt,26,2.3
+airflow,24,2.2

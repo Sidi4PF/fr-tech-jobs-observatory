@@ -1,21 +1,21 @@
 ﻿city,nb_offres,median_salary
-44 - Nantes,40,22500.0
-75 - Paris,32,17500.0
-31 - Toulouse,29,18750.0
-69 - Lyon 1er Arrondissement,29,5200.0
-33 - Bordeaux,27,20000.0
-37 - Tours,27,
-75 - Paris 1er Arrondissement,26,25000.0
-67 - Strasbourg,25,17500.0
-92 - Nanterre,23,
-Luxembourg,18,
-35 - Rennes,16,20000.0
-34 - Montpellier,15,
-13 - Aix-en-Provence,14,17500.0
-75 - Paris 9e Arrondissement,14,22500.0
-79 - Niort,14,17500.0
-92 - Boulogne-Billancourt,13,15000.0
-76 - Rouen,11,20000.0
-92 - Courbevoie,11,27500.0
-45 - Orléans,10,
-59 - Lezennes,10,
+Paris,100,48750.0
+Nantes,42,50750.0
+Tours,35,
+Lyon 1Er Arrondissement,29,15600.0
+Toulouse,28,31130.0
+Lyon,26,57500.0
+Bordeaux,25,37000.0
+Nanterre,24,
+Paris 1Er Arrondissement,24,57500.0
+Strasbourg,23,32750.0
+Aix-En-Provence,17,44000.0
+Montpellier,16,45000.0
+Rennes,16,47500.0
+Rouen,16,51250.0
+Boulogne-Billancourt,15,40000.0
+Niort,15,43000.0
+Lille,13,42500.0
+Marseille 1Er Arrondissement,12,45000.0
+Marseille,11,75000.0
+Massy,11,45000.0
